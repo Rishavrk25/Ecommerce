@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icons from "../data/Icons";
 
-const Checkout = ({ cart, clearCart, setView }) => {
+const Checkout = ({ cart, clearCart }) => {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -28,7 +28,6 @@ const Checkout = ({ cart, clearCart, setView }) => {
             <br/><span className="text-sm mt-2 block">Order ID: #KG{Math.floor(Math.random() * 10000)}</span>
           </p>
           <button 
-            onClick={() => setView('shop')}
             className="px-8 py-3 bg-pink-600 text-white rounded-xl font-medium shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all transform hover:scale-105"
           >
             Continue Shopping

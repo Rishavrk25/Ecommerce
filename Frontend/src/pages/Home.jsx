@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { use } from 'react'
 import Icons from "../data/Icons";
 import PRODUCTS from "../data/Products";
 import TESTIMONIALS from "../data/Testimonials";
 import ProductCard from "../Components/ProductCard";
 import HERO_IMAGES from '../data/HeroImages';
+import { useNavigate } from 'react-router-dom';
+
 
 const Home = ({ addToCart, setView, heroIndex }) => {
+
+  const navigate = useNavigate();
+
   return (
     <>
             {/* Hero Section */}
@@ -38,7 +43,7 @@ const Home = ({ addToCart, setView, heroIndex }) => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-fadeInUp delay-300">
                   <button 
-                    onClick={() => setView('shop')}
+                    onClick={() => navigate('/shop')}
                     className="px-8 py-4 bg-pink-600 text-white rounded-xl font-medium shadow-lg shadow-pink-200 hover:bg-pink-700 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     Shop Now <Icons.ChevronRight className="w-4 h-4" />
@@ -59,7 +64,7 @@ const Home = ({ addToCart, setView, heroIndex }) => {
                   { title: 'Daily Cotton Seva', img: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=600', color: 'from-blue-400 to-teal-500' },
                   { title: 'Winter Woolen Sets', img: 'https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&cs=tinysrgb&w=600', color: 'from-pink-400 to-rose-500' }
                 ].map((item, idx) => (
-                  <div key={idx} onClick={() => setView('shop')} className="group cursor-pointer relative rounded-2xl overflow-hidden h-80 shadow-md animate-fadeInUp" style={{ animationDelay: `${idx * 150}ms` }}>
+                  <div key={idx} onClick={() => navigate('/shop')} className="group cursor-pointer relative rounded-2xl overflow-hidden h-80 shadow-md animate-fadeInUp" style={{ animationDelay: `${idx * 150}ms` }}>
                     <img src={item.img} alt={item.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                     <div className={`absolute inset-0 bg-gradient-to-t ${item.color} opacity-0 group-hover:opacity-40 transition-opacity duration-500`}></div>
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500"></div>
