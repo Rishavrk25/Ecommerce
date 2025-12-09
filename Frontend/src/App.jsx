@@ -22,28 +22,32 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [activeMainCategory, setActiveMainCategory] = useState("Kurtis");
+  const [activeMainCategory, setActiveMainCategory] = useState("All");
   const [heroIndex, setHeroIndex] = useState(0);
 
   const addToCart = (product) => {
+    const uniqueId = `${product.id}-${product.selectedColor || 'default'}-${product.selectedSize || 'default'}`;
+    const cartItem = { ...product, cartItemId: uniqueId };
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((item) => item.cartItemId === uniqueId);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          item.cartItemId === uniqueId
+            ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, cartItem];
     });
     setIsCartOpen(true);
   };
 
-  const updateQuantity = (id, delta) => {
+
+  const updateQuantity = (cartItemId, delta) => {
     setCart((prev) =>
       prev.map((item) => {
-        if (item.id === id) {
+        if (item.cartItemId === cartItemId) {
           return { ...item, quantity: Math.max(1, item.quantity + delta) };
         }
         return item;
@@ -51,8 +55,8 @@ export default function App() {
     );
   };
 
-  const removeItem = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeItem = (cartItemId) => {
+    setCart((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
   };
 
   const clearCart = () => {
@@ -88,13 +92,9 @@ export default function App() {
   return (
     <UserProvider>
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="min-h-screen bg-[#FFFBF7] font-sans selection:bg-pink-100 selection:text-pink-900 overflow-x-hidden">
-                {/* --- Global Animations Styles --- */}
-                <style>{`
+        <div className="min-h-screen bg-[#FFFBF7] font-sans selection:bg-pink-100 selection:text-pink-900 overflow-x-hidden">
+          {/* --- Global Animations Styles --- */}
+          <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -120,79 +120,77 @@ export default function App() {
         .custom-scrollbar::-webkit-scrollbar-thumb { bg-gray-300; border-radius: 4px; }
       `}</style>
 
-                {/* Navigation */}
-                <Navbar
-                  view={view}
-                  setView={setView}
-                  isCartOpen={isCartOpen}
-                  setIsCartOpen={setIsCartOpen}
-                  totalItems={totalItems}
-                  isMobileMenuOpen={isMobileMenuOpen}
-                  setIsMobileMenuOpen={setIsMobileMenuOpen}
-                />
-
-                <CartDrawer
-                  isOpen={isCartOpen}
-                  onClose={() => setIsCartOpen(false)}
-                  cart={cart}
-                  updateQuantity={updateQuantity}
-                  removeItem={removeItem}
-                  onCheckout={() => setView("checkout")}
-                />
-
-                {/* Main Content Area with Page Transition */}
-                <div
-                  key={view}
-                  className="animate-fadeIn min-h-[calc(100vh-5rem)]"
-                >
-                  {/* --- HOME VIEW --- */}
-                  {view === "home" && (
-                    <Home
-                      addToCart={addToCart}
-                      setView={setView}
-                      setHeroIndex={setHeroIndex}
-                      heroIndex={heroIndex}
-                    />
-                  )}
-
-                  {/* --- SHOP VIEW --- */}
-                  {view === "shop" && (
-                    <Shop
-                      activeCategory={activeCategory}
-                      setActiveCategory={setActiveCategory}
-                      addToCart={addToCart}
-                      filteredProducts={filteredProducts}
-                      activeMainCategory={activeMainCategory}
-                      setActiveMainCategory={setActiveMainCategory}
-                    />
-                  )}
-
-                  {/* --- ABOUT US VIEW --- */}
-                  {view === "about" && <About />}
-
-                  {/* --- CONTACT VIEW --- */}
-                  {view === "contact" && <Contact />}
-
-                  {/* --- CHECKOUT VIEW --- */}
-                  {view === "checkout" && (
-                    <Checkout
-                      cart={cart}
-                      clearCart={clearCart}
-                      setView={setView}
-                    />
-                  )}
-                </div>
-
-                {/* Footer */}
-                <Footer />
-              </div>
-            }
+          {/* Navigation */}
+          <Navbar
+            view={view}
+            setView={setView}
+            isCartOpen={isCartOpen}
+            setIsCartOpen={setIsCartOpen}
+            totalItems={totalItems}
+            isMobileMenuOpen={isMobileMenuOpen}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
           />
-          <Route
-            path="/product/:id"
-            element={<ProductDetails product={PRODUCTS} />}
+
+          <CartDrawer
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            cart={cart}
+            updateQuantity={updateQuantity}
+            removeItem={removeItem}
+            onCheckout={() => setView("checkout")}
           />
-        </Routes>
+
+          {/* Main Content Area with Page Transition */}
+          <div key={view} className="animate-fadeIn min-h-[calc(100vh-5rem)]">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    addToCart={addToCart}
+                    setView={setView}
+                    heroIndex={heroIndex}
+                  />
+                }
+              />
+              <Route
+                path="/shop"
+                element={
+                  <Shop
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                    addToCart={addToCart}
+                    filteredProducts={filteredProducts}
+                    activeMainCategory={activeMainCategory}
+                    setActiveMainCategory={setActiveMainCategory}
+                  />
+                }
+              />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route
+                path="/product/:id"
+                element={
+                  <ProductDetails
+                    onAddToCart={addToCart}
+                    onNavigate={setView}
+                    isCartOpen={isCartOpen}
+                    setIsCartOpen={setIsCartOpen}
+                    totalItems={totalItems}
+                    isMobileMenuOpen={isMobileMenuOpen}
+                    setIsMobileMenuOpen={setIsMobileMenuOpen}
+                  />
+                }
+              />
+              <Route
+                path="/checkout"
+                element={<Checkout cart={cart} clearCart={clearCart} />}
+              />
+            </Routes>
+          </div>
+
+          <Footer />
+        </div>
       </BrowserRouter>
     </UserProvider>
   );

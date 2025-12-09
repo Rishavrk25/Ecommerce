@@ -5,7 +5,7 @@ import TESTIMONIALS from "../data/Testimonials";
 import ProductCard from "../Components/ProductCard";
 import HERO_IMAGES from '../data/HeroImages';
 
-const Home = ({ addToCart, setView, setHeroIndex, heroIndex }) => {
+const Home = ({ addToCart, setView, heroIndex }) => {
   return (
     <>
             {/* Hero Section */}

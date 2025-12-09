@@ -34,8 +34,10 @@ const ProductCard = ({ product, addToCart }) => {
       <div className="flex items-center justify-between mt-auto">
         <span className="text-xl font-bold text-gray-900">₹{product.price}</span>
         <button 
-          // onClick={() => addToCart(product)}
-          onClick={() => navigate(`/product/${product.id}`)}
+           onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/product/${product.id}`);
+          }}
           className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 active:bg-orange-800 transition-all duration-300 flex items-center gap-2 shadow-orange-200 shadow-lg transform active:scale-95 hover:shadow-xl"
         >
           <Icons.ShoppingBag className="w-4 h-4" />
